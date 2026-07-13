@@ -1,0 +1,10 @@
+{
+  "outputKind": "file",
+  "inputs": [
+    {"name": "image", "type": "image", "description": "Single object on a simple background", "required": true, "order": 0},
+    {"name": "style", "type": "string", "description": "Mesh or voxelized GLB", "default": "voxel48", "choices": ["mesh", "voxel32", "voxel48", "voxel64"], "order": 1},
+    {"name": "foreground_ratio", "type": "number", "description": "Object size in the normalized view", "default": 0.85, "min": 0.5, "max": 0.95, "order": 2},
+    {"name": "mc_resolution", "type": "integer", "description": "Surface extraction resolution", "default": 256, "choices": [128, 192, 256], "order": 3}
+  ]
+}
+

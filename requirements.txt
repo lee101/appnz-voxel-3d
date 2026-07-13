@@ -1,0 +1,14 @@
+numpy==1.26.4
+torch==2.2.0
+torchvision==0.17.0
+omegaconf==2.3.0
+Pillow==10.4.0
+einops==0.7.0
+transformers==4.35.0
+trimesh==4.0.5
+scipy==1.12.0
+rembg==2.0.67
+huggingface-hub==0.33.4
+imageio[ffmpeg]==2.34.2
+git+https://github.com/tatsy/torchmcubes.git@3381600ddc3d2e4d74222f8495866be5fafbace4
+
