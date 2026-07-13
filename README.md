@@ -21,8 +21,13 @@ photo → U2NetP foreground isolation → TripoSR triplane → marching cubes
 ```bash
 cog predict -i image=@object.png -i style=voxel48 -i mc_resolution=192
 docker run --rm --gpus all -p 5000:5000 ghcr.io/lee101/appnz-voxel-3d:latest
-app cogs create --name voxel-3d --image ghcr.io/lee101/appnz-voxel-3d:latest --hardware gpu-rtx3090
+app cogs deploy voxel-3d --name my-voxel-3d
 app apps deploy demo --app voxel-3d-demo
+node --test tests/appnz_client.test.mjs
 ```
+
+The hosted demo waits through app.nz's queued prediction lifecycle, reports
+worker progress, and renders the returned artifact automatically. Its queue
+client tests success, API errors, worker failures, timeouts, and output shapes.
 
 MIT adapter, source, and weights. Full provenance is in `THIRD_PARTY.md`.

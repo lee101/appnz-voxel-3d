@@ -114,6 +114,10 @@
         font-weight: 950;
         cursor: pointer;
       }
+      button:disabled {
+        cursor: wait;
+        opacity: 0.58;
+      }
       .two {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -193,7 +197,9 @@
         ></model-viewer>
       </section>
     </main>
-    <script>
+    <script type="module">
+      import { outputHref, runPrediction } from "./appnz-client.mjs";
+
       const $ = (x) => document.getElementById(x),
         data = (f) =>
           new Promise((ok) => {
@@ -209,35 +215,39 @@
           return;
         }
         $("status").textContent = "Reconstructing and voxelizing…";
+        const button = $("run");
+        button.disabled = true;
         try {
-          const r = await fetch(
-              `https://app.nz/api/cogs/${encodeURIComponent(id)}/predict`,
-              {
-                method: "POST",
-                credentials: "include",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({
-                  input: {
-                    image: await data(f),
-                    style: $("style").value,
-                    foreground_ratio: 0.85,
-                    mc_resolution: Number($("resolution").value),
-                  },
-                }),
-              },
-            ),
-            b = await r.json();
-          if (!r.ok) throw Error(b.error || "Prediction failed");
-          const out = b.output || b.prediction?.output;
+          const prediction = await runPrediction({
+            modelId: id,
+            input: {
+              image: await data(f),
+              style: $("style").value,
+              foreground_ratio: 0.85,
+              mc_resolution: Number($("resolution").value),
+            },
+            timeoutMs: 30 * 60 * 1000,
+            onStatus: ({ status }) => {
+              $("status").textContent =
+                status === "starting"
+                  ? "Allocating a 3D worker…"
+                  : status === "processing"
+                    ? "Reconstructing and voxelizing…"
+                    : `Prediction ${status}…`;
+            },
+          });
+          const out = outputHref(prediction.output);
+          if (!out) throw new Error("The Cog returned an unsupported output.");
           if (out) {
             $("viewer").src = out;
             $("viewer").style.display = "block";
           }
-          $("status").textContent = out
-            ? "Drag to orbit your GLB."
-            : "Queued — follow it in Cog Studio.";
+          $("status").textContent =
+            `GLB ready in ${((prediction.predictMs || 0) / 1000).toFixed(2)}s. Drag to orbit it.`;
         } catch (e) {
           $("status").textContent = e.message;
+        } finally {
+          button.disabled = false;
         }
       };
     </script>
