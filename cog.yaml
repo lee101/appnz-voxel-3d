@@ -11,9 +11,9 @@ build:
     - libglib2.0-0
   run:
     - git clone https://github.com/VAST-AI-Research/TripoSR.git /opt/TripoSR && cd /opt/TripoSR && git checkout 107cefdc244c39106fa830359024f6a2f1c78871
+    - TORCH_CUDA_ARCH_LIST='8.6' pip install git+https://github.com/tatsy/torchmcubes.git@3381600ddc3d2e4d74222f8495866be5fafbace4
     - python -c "from huggingface_hub import snapshot_download; snapshot_download('stabilityai/TripoSR', revision='5b521936b01fbe1890f6f9baed0254ab6351c04a', local_dir='/weights/triposr', allow_patterns=['config.yaml','model.ckpt'])"
     - python -c "import hashlib; assert hashlib.sha256(open('/weights/triposr/model.ckpt','rb').read()).hexdigest()=='429e2c6b22a0923967459de24d67f05962b235f79cde6b032aa7ed2ffcd970ee'"
     - python -c "import rembg; rembg.new_session('u2netp')"
 image: ghcr.io/lee101/appnz-voxel-3d:latest
 run: "predict.py:Runner"
-
