@@ -55,7 +55,11 @@ class Runner(BaseRunner):
     def run(
         self,
         image: Path = Input(description="A single object on a simple background"),
-        style: str = Input(description="Output geometry", default="voxel48", choices=list(STYLES)),
+        style: str = Input(
+            description="Output geometry",
+            default="voxel48",
+            choices=["mesh", "voxel32", "voxel48", "voxel64"],
+        ),
         foreground_ratio: float = Input(description="Normalized object size", default=0.85, ge=0.5, le=0.95),
         mc_resolution: int = Input(description="Surface extraction detail", default=256, choices=[128, 192, 256]),
     ) -> Path:
